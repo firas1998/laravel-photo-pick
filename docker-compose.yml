@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+    laravel-photo-pick:
+        container_name: laravel-photo-pick
+        build:
+            context: .
+        volumes:
+            - .:/app
+        ports:
+            - 8000:8000
+        command: bash -c 'php artisan migrate && php artisan serve --host 0.0.0.0 --port 8000'
+        networks:
+            - webnet
+        restart: unless-stopped
+        depends_on:
+            - mysql
+    mysql:
+        container_name: mysql
+        image: mysql:5.7
+        networks:
+            - webnet
+        restart: always
+        environment:
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: photo_pick
+        expose:
+            - 3306
+        restart: unless-stopped
+        volumes:
+            - mysql:/var/lib/mysql
+            - mysql_config:/etc/mysqls
+networks:
+    webnet:
+
+volumes:
+    mysql:
+    mysql_config:
